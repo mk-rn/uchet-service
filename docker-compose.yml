@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  uchet-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+        - BRANCH=${UCHET_API_BRANCH:-main}
+    container_name: uchet-api
+    ports:
+      - "4401:8000"
+    environment:
+      - GOOGLE_SHEETS_CREDENTIALS_FILE=/app/credentials.json
+      - SHEET_ID=${SHEET_ID:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    restart: unless-stopped
+    networks:
+      - uchet-network
+
+  uchet:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+        - BRANCH=${UCHET_BRANCH:-main}
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:4401}
+    container_name: uchet-frontend
+    ports:
+      - "4402:5174"
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://uchet-api:8000}
+      - VITE_SHEET_ID=${SHEET_ID:-}
+    depends_on:
+      - uchet-api
+    restart: unless-stopped
+    networks:
+      - uchet-network
+
+networks:
+  uchet-network:
+    driver: bridge
+
+volumes:
+  uchet-data: 
