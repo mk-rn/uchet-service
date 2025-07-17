@@ -32,7 +32,8 @@ services:
       - "4402:5174"
     environment:
       - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://uchet-api:8000}
-      - VITE_SHEET_ID=${SHEET_ID:-}
+      - VITE_SHEET_ID=${VITE_SHEET_ID:-1wCVhKuVf_zajT1LILwO5c63m00AxZiNVNpwaB4a_tgk}
+      - VITE_TELEGRAM_USERS=${VITE_TELEGRAM_USERS:-{"1249750628":"Рамазан","1911294628":"Ринат","555349907":"Аслан","1368597243":"Марина","517908100":"Залина"}}
     depends_on:
       - uchet-api
     restart: unless-stopped
